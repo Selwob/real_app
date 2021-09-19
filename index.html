@@ -3,59 +3,133 @@
 <head>
     <script>
         let db = [
-            { id: 11, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 12, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 13, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 14, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 15, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 16, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 17, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 18, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 19, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
-            { id: 20, article: "programming is great", name: "programming article 1", tags: ["progamming"] },
+            {
+                id: 11,
+                article: "programming is great",
+                name: "programming article 11",
+                tags: ["progamming"]
+            },
+            {
+                id: 12,
+                article: "programming is great",
+                name: "programming article 12",
+                tags: ["progamming"]
+            },
+            {
+                id: 13,
+                article: "programming is great",
+                name: "programming article 13",
+                tags: ["progamming"]
+            },
+            {
+                id: 14,
+                article: "programming is great",
+                name: "programming article 14",
+                tags: ["progamming"]
+            },
+            {
+                id: 15,
+                article: "programming is great",
+                name: "programming article 15",
+                tags: ["progamming"]
+            },
+            {
+                id: 16,
+                article: "programming is great",
+                name: "programming article 16",
+                tags: ["progamming"]
+            },
+            {
+                id: 17,
+                article: "programming is great",
+                name: "programming article 17",
+                tags: ["progamming"]
+            },
+            {
+                id: 18,
+                article: "programming is great",
+                name: "programming article 18",
+                tags: ["progamming"]
+            },
+            {
+                id: 19,
+                article: "programming is great",
+                name: "programming article 19",
+                tags: ["progamming", "life"]
+            },
+            {
+                id: 20,
+                article: "programming is great",
+                name: "programming article 20",
+                tags: ["progamming", "death"]
+            },
         ];
     </script>
+
 </head>
 
 <body>
-    <h1>Hello World. </h1>
-    <div id="articles"></div>
+<div style="display: grid; grid-template-columns: [first] 300px [content] auto [last] 300px [end];">
+    <h1 style="grid-column: content">Hello World. </h1>
+    <div id="articles" style="grid-column: content"></div>
+</div>
 
-    <script>
-        class ArticleList {
-            constructor(articles) {
-                this.el_tag = document.querySelector('#articles');
-                this.articles = articles;
+<script>
+    class Article {
+        constructor(article) {
+            this.article = article;
+        }
 
-            }
-            renderArticle(article) {
-                this.el_tag.innerHTML = ""
-            }
+        render() {
+            let detailEl = document.createElement('p');
 
-            render() {
-                let res = [];
-                this.articles.forEach(art => {
-                    let el = document.createElement('p');
-                    el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
-                    el.onclick = (ev => {
-                        this.renderArticle(art);
-                        console.log(ev)
-                    })
-                    res.push(el)
-                });
-                
-                res.forEach(el => {
-                    this.el_tag.append(el)
-                })
-            }
+            detailEl.innerHTML = `
+            <h2>Article #${this.article.id} ${this.article.name}</h2>
+            <p>${this.article.article}</p>
+            <p>${this.article.tags.join(', ')}</p>
+            <p><button>Back</button></p>
+            `
+
+            detailEl.querySelector('button').onclick = (ev => {
+                this.render()
+            })
+            return detailEl
+
+        }
+    }
+
+    class ArticleApp {
+        constructor(articles) {
+            this.el_tag = document.querySelector('#articles');
+            this.articles = articles;
 
         }
 
-        let articleList = new ArticleList(db);
-        articleList.render();
+        render() {
+            this.el_tag.innerHTML = ""
+            let res = [];
+            this.articles.forEach(art => {
+                let el = document.createElement('p');
+                el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
+                el.onclick = (ev => {
+                    this.el_tag.innerHTML = ""
+                    this.el_tag.append(new Article(art).render())
+                })
+                res.push(el)
+            });
+
+            res.forEach(el => {
+                this.el_tag.append(el)
+            })
+        }
+
+    }
+
+    let articleList = new ArticleApp(db);
+    articleList.render();
 
 
-    </script>
+</script>
 </body>
 
 </html>
