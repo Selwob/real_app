@@ -76,8 +76,9 @@
 
 <script>
     class Article {
-        constructor(article) {
+        constructor(article, onBackClick) {
             this.article = article;
+            this.onBackClick = onBackClick;
         }
 
         render() {
@@ -91,7 +92,7 @@
             `
 
             detailEl.querySelector('button').onclick = (ev => {
-                this.render()
+                this.onBackClick()
             })
             return detailEl
 
@@ -113,7 +114,7 @@
                 el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
                 el.onclick = (ev => {
                     this.el_tag.innerHTML = ""
-                    this.el_tag.append(new Article(art).render())
+                    this.el_tag.append(new Article(art, () => this.render()).render())
                 })
                 res.push(el)
             });
@@ -127,7 +128,6 @@
 
     let articleList = new ArticleApp(db);
     articleList.render();
-
 
 </script>
 </body>
