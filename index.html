@@ -17,7 +17,8 @@
     </head>
     
     <body>
-        <h1>Hello World. This is the </h1>
+        <h1>Hello World. </h1>
+        <div id="articles"></div>
 
         <script>
             class ArticleList {
@@ -25,13 +26,27 @@
                     this.articles = articles;
 
                 }
-                render (){
+                render () {
+                    let res = [];
                     this.articles.forEach(element => {
-                        
+                        let el = document.createElement('h2');
+                        el.innerHTML = `<p>${element.name}</p>`
+                        el.onclick = (ev => {
+                            console.log(ev)
+                        })
+                        res.push(el)
                     });
-                    return ""
+                    return res
                 }
             }
+
+            let articleList = new ArticleList(db);
+            articleList.render().forEach(el => {
+                let el_tag = document.querySelector('#articles');
+                el_tag.append(el)
+            })
+
+
         </script>
     </body>
 </html>
