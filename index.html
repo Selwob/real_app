@@ -76,9 +76,10 @@
 
 <script>
     class Article {
-        constructor(article, onBackClick) {
+        constructor(article, onBackClick, onEditClick) {
             this.article = article;
             this.onBackClick = onBackClick;
+            this.onEditClickLocal = onEditClick;
         }
 
         render() {
@@ -88,10 +89,13 @@
             <h2>Article #${this.article.id} ${this.article.name}</h2>
             <p>${this.article.article}</p>
             <p>${this.article.tags.join(', ')}</p>
-            <p><button>Back</button></p>
+            <p><button id="edit">Edit</button></p>
+            <p><button id="back">Back</button></p>
             `
-
-            detailEl.querySelector('button').onclick = (ev => {
+            detailEl.querySelector('#edit').onclick = (ev => {
+                this.onEditClickLocal(this.article)
+            })
+            detailEl.querySelector('#back').onclick = (ev => {
                 this.onBackClick()
             })
             return detailEl
@@ -113,8 +117,9 @@
                 let el = document.createElement('p');
                 el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
                 el.onclick = (ev => {
+                    let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
                     this.el_tag.innerHTML = ""
-                    this.el_tag.append(new Article(art, () => this.render()).render())
+                    this.el_tag.append(articleComponent.render())
                 })
                 res.push(el)
             });
@@ -122,6 +127,47 @@
             res.forEach(el => {
                 this.el_tag.append(el)
             })
+        }
+
+        onEditClick(art) {
+            // input for each field(name, article, tags)
+            // onSave button (take value of each input and put it into the article)
+            // render the page again with updated fields
+            this.el_tag.innerHTML = ""
+            
+            let user_editable = ["name", "article", "tags"];
+            user_editable.forEach(editable => {
+                let el = document.createElement('p');
+                el.innerHTML = `<input type="text" id="${editable}" value="${art[editable]}">`
+                this.el_tag.append(el)
+            })
+            let saveButton = document.createElement('p');
+            saveButton.innerHTML = "<p><button class='button' id='save'>Save</button></p>"
+            this.el_tag.append(saveButton);
+
+            let backButton = document.createElement('p');
+            backButton.innerHTML = "<p><button class='button' id='back'>back</button></p>"
+            this.el_tag.append(backButton);
+            
+            saveButton.querySelector('#save').onclick = (ev => {
+                let newName = document.getElementById('name').value;
+                let newArticle = document.getElementById('article').value;
+                let newTags = document.getElementById('tags').value;
+                art.name = newName
+                art.article = newArticle
+                art.newTags = tags
+                let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
+                this.el_tag.innerHTML = ""
+                this.el_tag.append(articleComponent.render())
+
+            })
+
+            backButton.querySelector('#back').onclick = (ev => {
+                    let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
+                    this.el_tag.innerHTML = ""
+                    this.el_tag.append(articleComponent.render())
+            })
+        
         }
 
     }

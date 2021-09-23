@@ -1,0 +1,24 @@
+<script>
+    class A {
+        a = 1;
+        go() {
+
+            let t2 = () => {
+                console.log(this.a, "t 2 call");
+            }
+    
+            t2()
+            function t(){
+                console.log(this.a, "t call");
+            }
+
+            t()
+
+        }
+
+
+    }
+
+    let clas = new A()
+    clas.go()   
+</script>
