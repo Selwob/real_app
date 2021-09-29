@@ -88,6 +88,20 @@
                 articleIndex = index
             } 
         })
+        
+        if (window.location.hash.endsWith("edit")) {
+            let artId = window.location.hash.slice(1, 3);
+            let editApp = new ArticleApp
+            
+            // How did we find this last time???
+            let art = "";
+            for (let article in db) {
+                if (db[article].id == artId) {
+                    art = db[article]
+                }
+            }
+            editApp.onEditClick(art)
+        }
 
         if (db[articleIndex] !== undefined) {
             detailEl = new Article(db[articleIndex]).render()
@@ -118,7 +132,9 @@
             <p><button id="back">Back</button></p>
             `
             detailEl.querySelector('#edit').onclick = (ev => {
-                this.onEditClickLocal(this.article)
+                // this.onEditClickLocal(this.article)
+                window.location.hash = this.article.id + "edit";
+
             })
             detailEl.querySelector('#back').onclick = (ev => {
                 // this.onBackClick()
@@ -155,13 +171,13 @@
             res.forEach(el => {
                 this.el_tag.append(el)
             })
-            //window.location.hash = "";
         }
 
         onEditClick(art) {
             // input for each field(name, article, tags)
             // onSave button (take value of each input and put it into the article)
             // render the page again with updated fields
+            //var obj = a.find(o => o[reportToFind]);
             this.el_tag.innerHTML = ""
             
             let user_editable = ["name", "article", "tags"];
@@ -192,9 +208,10 @@
             })
 
             backButton.querySelector('#back').onclick = (ev => {
-                    let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
-                    this.el_tag.innerHTML = ""
-                    this.el_tag.append(articleComponent.render())
+                    // let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
+                    // this.el_tag.innerHTML = ""
+                    // this.el_tag.append(articleComponent.render())
+                    window.location.hash = art;
             })
         
         }
