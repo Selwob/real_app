@@ -75,6 +75,31 @@
 </div>
 
 <script>
+    function checkTheHash() {
+        console.log('location changed', window.location.hash);
+        if (window.location.hash == "") {
+            let articleList = new ArticleApp(db);
+            articleList.render();
+        }
+        
+        let articleIndex = "";
+        db.forEach(function(art, index) {
+            if (art.id == window.location.hash.slice(1)) {
+                articleIndex = index
+            } 
+        })
+
+        if (db[articleIndex] !== undefined) {
+            detailEl = new Article(db[articleIndex]).render()
+            let articlesSelector = document.querySelector('#articles');
+            articlesSelector.innerHTML = "";
+            articlesSelector.append(detailEl);
+        }
+    }
+
+    window.addEventListener("hashchange", checkTheHash);
+    
+
     class Article {
         constructor(article, onBackClick, onEditClick) {
             this.article = article;
@@ -96,7 +121,9 @@
                 this.onEditClickLocal(this.article)
             })
             detailEl.querySelector('#back').onclick = (ev => {
-                this.onBackClick()
+                // this.onBackClick()
+                window.location.hash = "";
+
             })
             return detailEl
 
@@ -116,17 +143,19 @@
             this.articles.forEach(art => {
                 let el = document.createElement('p');
                 el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
-                el.onclick = (ev => {
-                    let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
-                    this.el_tag.innerHTML = ""
-                    this.el_tag.append(articleComponent.render())
-                })
+                // el.onclick = (ev => {
+                //     let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
+                //     this.el_tag.innerHTML = ""
+                //     this.el_tag.append(articleComponent.render())
+                // })
+                // // Changed to use navigation API above 
                 res.push(el)
             });
 
             res.forEach(el => {
                 this.el_tag.append(el)
             })
+            //window.location.hash = "";
         }
 
         onEditClick(art) {
@@ -172,8 +201,8 @@
 
     }
 
-    let articleList = new ArticleApp(db);
-    articleList.render();
+    
+    checkTheHash();
 
 </script>
 </body>
