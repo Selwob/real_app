@@ -2,6 +2,7 @@
 
 <head>
     <script>
+        // The database of articles
         let db = [
             {
                 id: 11,
@@ -61,24 +62,171 @@
                 id: 20,
                 article: "programming is great",
                 name: "programming article 20",
-                tags: ["progamming", "death"]
+                tags: ["progamming"]
+            },
+            {
+                id: 21,
+                article: "programming is great",
+                name: "programming article 21",
+                tags: ["progamming"]
+            },
+            {
+                id: 22,
+                article: "programming is great",
+                name: "programming article 22",
+                tags: ["progamming"]
+            },
+            {
+                id: 23,
+                article: "programming is great",
+                name: "programming article 23",
+                tags: ["progamming"]
+            },
+            {
+                id: 24,
+                article: "programming is great",
+                name: "programming article 24",
+                tags: ["progamming"]
+            },
+            {
+                id: 25,
+                article: "programming is great",
+                name: "programming article 25",
+                tags: ["progamming"]
+            },
+            {
+                id: 26,
+                article: "programming is great",
+                name: "programming article 26",
+                tags: ["progamming"]
+            },
+            {
+                id: 27,
+                article: "programming is great",
+                name: "programming article 27",
+                tags: ["progamming"]
+            },
+            {
+                id: 28,
+                article: "programming is great",
+                name: "programming article 28",
+                tags: ["progamming"]
+            },
+            {
+                id: 29,
+                article: "programming is great",
+                name: "programming article 29",
+                tags: ["progamming"]
+            },
+            {
+                id: 30,
+                article: "programming is great",
+                name: "programming article 30",
+                tags: ["progamming"]
+            },
+            {
+                id: 31,
+                article: "programming is great",
+                name: "programming article 31",
+                tags: ["progamming"]
             },
         ];
-    </script>
 
+        // Load db from localStorage
+        function loadDb () {
+            if (localStorage.getItem('database') !== null) {
+                db = JSON.parse(localStorage.getItem('database'));
+            }
+        }
+        loadDb();
+        </script>
+
+    <style>
+        body {
+            background-color: rgb(154, 189, 189);
+        }
+        </style>
 </head>
 
 <body>
-<div style="display: grid; grid-template-columns: [first] 300px [content] auto [last] 300px [end];">
-    <h1 style="grid-column: content">Hello World. </h1>
-    <div id="articles" style="grid-column: content"></div>
+    <div style="display: grid; grid-template-columns: [first] 300px [content] auto [last] 300px [end];">
+        <h1 style="grid-column: content">Hello World. </h1>
+        <div id="articles" style="grid-column: content"></div>
+</div>
+<div id="outer">
+    <div id="inner"; style="position: relative; left: 300px;">
+        <input type="button" class="navButton" id="first" onclick="firstPage()" value="first" />
+        <input type="button" class="navButton" id="previous" onclick="previousPage()" value="previous" />
+        <input type="button" class="navButton" id="next" onclick="nextPage()" value="next" />
+        <input type="button" class="navButton" id="last" onclick="lastPage()" value="last" />
+    </div>
 </div>
 
 <script>
+    // Pagination
+    let currentPage = 1;
+    let numberPerPage = 5;
+    let numberOfPages = 1;
+    let pageList = [];
+
+    function getNumberOfPages() {
+        return Math.ceil(db.length / numberPerPage)
+    }
+    
+    function nextPage() {
+        currentPage += 1;
+        loadList();
+        checkTheHash();
+    }
+
+    function previousPage() {
+        currentPage -= 1;
+        loadList();
+        checkTheHash();
+    }
+    
+    function firstPage() {
+        currentPage = 1;
+        loadList();
+        checkTheHash();
+    }
+
+    function lastPage() {
+        currentPage = numberOfPages;
+        loadList();
+        checkTheHash();
+    }
+
+    function check() {
+        document.getElementById("first").disabled = currentPage == 1 ? true : false;
+        document.getElementById("previous").disabled = currentPage == 1 ? true : false;
+        document.getElementById("next").disabled = currentPage == numberOfPages ? true : false;
+        document.getElementById("last").disabled = currentPage == numberOfPages ? true : false;
+    }
+
+    function loadList() {
+        pageList = [];
+        numberOfPages = getNumberOfPages();
+        let begin = ((currentPage - 1) * numberPerPage);
+        let end = begin + numberPerPage;
+        for (let article in db.slice(begin, end)) {
+            pageList.push(db.slice(begin, end)[article]);            
+        }
+        check();
+        return pageList;
+    }
+    loadList();
+
+    // Save to localStorage
+    function populateStorage() {
+        localStorage.setItem('database', JSON.stringify(db));
+        let myDb = JSON.parse(localStorage.getItem('database'));
+    }
+    
+    // Check the window.location.hash to determine what page to show
     function checkTheHash() {
-        console.log('location changed', window.location.hash);
         if (window.location.hash == "") {
-            let articleList = new ArticleApp(db);
+            let articleList = new ArticleApp(pageList);
             articleList.render();
         }
         
@@ -111,6 +259,7 @@
         }
     }
 
+    // Listen for hashchange
     window.addEventListener("hashchange", checkTheHash);
     
 
@@ -120,27 +269,31 @@
             this.onBackClick = onBackClick;
             this.onEditClickLocal = onEditClick;
         }
-
+        
+        // Render an individual article
         render() {
+
+            document.getElementById('inner').style.display = 'none'; // Hide the nav bar when going to article
+
             let detailEl = document.createElement('p');
 
             detailEl.innerHTML = `
             <h2>Article #${this.article.id} ${this.article.name}</h2>
             <p>${this.article.article}</p>
-            <p>${this.article.tags.join(', ')}</p>
+            <p>${this.article.tags}</p>
             <p><button id="edit">Edit</button></p>
             <p><button id="back">Back</button></p>
             `
             detailEl.querySelector('#edit').onclick = (ev => {
-                // this.onEditClickLocal(this.article)
                 window.location.hash = this.article.id + "edit";
 
             })
+            
             detailEl.querySelector('#back').onclick = (ev => {
-                // this.onBackClick()
                 window.location.hash = "";
 
             })
+
             return detailEl
 
         }
@@ -159,31 +312,29 @@
             this.articles.forEach(art => {
                 let el = document.createElement('p');
                 el.innerHTML = `<a href="#${art.id}">${art.name}</a>`
-                // el.onclick = (ev => {
-                //     let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
-                //     this.el_tag.innerHTML = ""
-                //     this.el_tag.append(articleComponent.render())
-                // })
-                // // Changed to use navigation API above 
                 res.push(el)
             });
 
             res.forEach(el => {
                 this.el_tag.append(el)
             })
+            
+            
+            document.getElementById('inner').style.display = 'block'; // Show the navigation if display is 'none'
         }
+
 
         onEditClick(art) {
             // input for each field(name, article, tags)
             // onSave button (take value of each input and put it into the article)
             // render the page again with updated fields
-            //var obj = a.find(o => o[reportToFind]);
             this.el_tag.innerHTML = ""
             
             let user_editable = ["name", "article", "tags"];
             user_editable.forEach(editable => {
                 let el = document.createElement('p');
                 el.innerHTML = `<input type="text" id="${editable}" value="${art[editable]}">`
+                // replace this with localStorage value    
                 this.el_tag.append(el)
             })
             let saveButton = document.createElement('p');
@@ -198,26 +349,30 @@
                 let newName = document.getElementById('name').value;
                 let newArticle = document.getElementById('article').value;
                 let newTags = document.getElementById('tags').value;
+                
+                let newTagsArr = newTags.split(" ");
+                for (let tag in newTagsArr) {
+                    if (newTagsArr[tag][0] != "#") {
+                        newTagsArr[tag] = "#" + newTagsArr[tag]
+                    }
+                }
+
                 art.name = newName
                 art.article = newArticle
-                art.newTags = tags
-                let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
-                this.el_tag.innerHTML = ""
-                this.el_tag.append(articleComponent.render())
+                art.tags = newTagsArr
+                window.location.hash = art.id
+
+                populateStorage();
 
             })
 
             backButton.querySelector('#back').onclick = (ev => {
-                    // let articleComponent = new Article(art, () => this.render(), (art) => this.onEditClick(art));
-                    // this.el_tag.innerHTML = ""
-                    // this.el_tag.append(articleComponent.render())
-                    window.location.hash = art;
+                    window.location.hash = art.id;
             })
         
         }
 
     }
-
     
     checkTheHash();
 
