@@ -1,7 +1,7 @@
 TODO:
 -1.
-fix paginator first/last disable function
-fix edit
+fix paginator first/last disable function --> fixed disable --> duplication bug on back button
+fix edit --> edit still works normally?
 make the page part of the location hash (show correct article list if given url)
 
 0.

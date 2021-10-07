@@ -157,20 +157,19 @@
         }
 
         body {
-            background-color: rgb(154, 189, 189);
+            background-color: rgb(153, 161, 177);
         }
     </style>
 
     <script src="paginator.js" type="text/javascript"></script>
+    <script src="editArticle.js" type="text/javascript"></script>
+    <script src="likeButton.js" type="text/javascript"></script>
 </head>
 
 <body>    
     <div style="display: grid; grid-template-columns: [first] 300px [content] auto [last] 300px [end];">
-        <div id="pageContent"></div>
-        <h1 style="grid-column: content">Hello World. </h1>
-        <div id="articles" style="grid-column: content"></div>
-        <div id="paginator" style="grid-column: content"></div>
-        
+        <div id="pageContent" style="grid-column: content">
+        </div>
 </div>
 
 
@@ -182,18 +181,26 @@
     
     // Check the window.location.hash to determine what page to show
     function checkTheHash() {
-        if (window.location.hash == "") {
-            function onPageChange(firstIndex, lastIndex) {
-               let articleList = new ArticleApp(db.slice(firstIndex, lastIndex))
-               articleList.render();
-            }
+        
+        // Clear #pageContent
+        document.getElementById('pageContent').innerHTML = "";
 
+        if (window.location.hash == "") {
+            
+            function onPageChange(firstIndex, lastIndex) {
+                document.getElementById('pageContent').innerHTML = "";
+
+                let articleList = new ArticleApp(db.slice(firstIndex, lastIndex))
+                let articleListEl = articleList.render();
+                document.getElementById('pageContent').append(articleListEl)
+                
+                let paginatorEl = paginator.render();
+                document.getElementById("pageContent").append(paginatorEl)
+                
+            }
+            
             let paginator = new Paginator(db.length, 5, onPageChange )
-            let articleList = new ArticleApp([]);
-            articleList.render();
-            let paginatorEl = paginator.render();
-            document.getElementById("paginator").innerHTML = "";
-            document.getElementById("paginator").append(paginatorEl)
+            onPageChange(0, 5);
         }
         
         let articleIndex = "";
@@ -205,38 +212,31 @@
         
         if (window.location.hash.endsWith("edit")) {
             let artId = window.location.hash.slice(1, 3);
-            let editApp = new ArticleApp
-            
             let art = "";
             for (let article in db) {
                 if (db[article].id == artId) {
                     art = db[article]
                 }
             }
-            editApp.onEditClick(art)
+            let editApp = new EditArticle(art)
+            let editEl = editApp.render(art);
+            document.getElementById("pageContent").append(editEl)
         }
 
+        // Show an individual article
         if (db[articleIndex] !== undefined) {
-            detailEl = new Article(db[articleIndex]).render()
-            let articlesSelector = document.querySelector('#articles');
-            articlesSelector.innerHTML = "";
-            articlesSelector.append(detailEl);
+            detailEl = new Article(db[articleIndex]).render();
+            likeButton = new LikeButton().render();
+
+            let pageContentSelector = document.querySelector('#pageContent');
+            pageContentSelector.innerHTML = "";
+            pageContentSelector.append(detailEl);
+            pageContentSelector.append(likeButton);            
         }
     }
 
     // Listen for hashchange
     window.addEventListener("hashchange", checkTheHash);
-
-    // Listen for like button click
-    function likeButton() {
-                let thumbColor = document.querySelector('.fa');
-                if (thumbColor.style.color == 'black') {
-                    thumbColor.style.color = 'blue'
-                } else {
-                    thumbColor.style.color = 'black'
-                };
-            }
-    
 
     class Article {
         constructor(article, onBackClick, onEditClick) {
@@ -247,9 +247,6 @@
         
         // Render an individual article
         render() {
-
-            document.getElementById('inner').style.display = 'none'; // Hide the nav bar when going to article
-
             let detailEl = document.createElement('p');
 
             let counter = 0;
@@ -260,8 +257,6 @@
             <p>${this.article.tags}</p>
             <p><button id="edit">Edit</button></p>
             <p><button id="back">Back</button></p>
-            <i onclick="likeButton()" class="fa fa-thumbs-up"></i>
-            <p id="counter">Here</p>
             `           
             
             detailEl.querySelector('#edit').onclick = (ev => {
@@ -281,13 +276,14 @@
 
     class ArticleApp {
         constructor(articles) {
-            this.el_tag = document.querySelector('#articles');
+            //this.el_tag = document.querySelector('#pageContent');
             this.articles = articles;
 
         }
 
         render() {
-            this.el_tag.innerHTML = ""
+            let renderEl = document.createElement("div");
+            renderEl.innerHTML = "";
             let res = [];
             this.articles.forEach(art => {
                 let el = document.createElement('p');
@@ -296,58 +292,11 @@
             });
 
             res.forEach(el => {
-                this.el_tag.append(el)
-            })
+                renderEl.append(el)
+            });
+
+            return renderEl;
     
-        }
-
-
-        onEditClick(art) {
-            // input for each field(name, article, tags)
-            // onSave button (take value of each input and put it into the article)
-            // render the page again with updated fields
-            this.el_tag.innerHTML = ""
-            
-            let user_editable = ["name", "article", "tags"];
-            user_editable.forEach(editable => {
-                let el = document.createElement('p');
-                el.innerHTML = `<input type="text" id="${editable}" value="${art[editable]}">`
-                // replace this with localStorage value    
-                this.el_tag.append(el)
-            })
-            let saveButton = document.createElement('p');
-            saveButton.innerHTML = "<p><button class='button' id='save'>Save</button></p>"
-            this.el_tag.append(saveButton);
-
-            let backButton = document.createElement('p');
-            backButton.innerHTML = "<p><button class='button' id='back'>back</button></p>"
-            this.el_tag.append(backButton);
-            
-            saveButton.querySelector('#save').onclick = (ev => {
-                let newName = document.getElementById('name').value;
-                let newArticle = document.getElementById('article').value;
-                let newTags = document.getElementById('tags').value;
-                
-                let newTagsArr = newTags.split(" ");
-                for (let tag in newTagsArr) {
-                    if (newTagsArr[tag][0] != "#") {
-                        newTagsArr[tag] = "#" + newTagsArr[tag]
-                    }
-                }
-
-                art.name = newName
-                art.article = newArticle
-                art.tags = newTagsArr
-                window.location.hash = art.id
-
-                populateStorage();
-
-            })
-
-            backButton.querySelector('#back').onclick = (ev => {
-                    window.location.hash = art.id;
-            })
-        
         }
 
     }

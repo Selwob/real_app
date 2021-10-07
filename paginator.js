@@ -54,20 +54,20 @@ class Paginator {
 
     render() {
         let el = document.createElement("div");
-        el.innerHTML = `<div id="outer">
+        el.innerHTML = `
+        <div id="outer">
         <div id="inner"; style="position: relative; left: 300px;">
             <input type="button" class="navButton" id="first" value="first" />
             <input type="button" class="navButton" id="previous" value="previous" />
             <input type="button" class="navButton" id="next" value="next" />
             <input type="button" class="navButton" id="last" value="last" />
         </div>
-    </div>`
+        </div>`
         el.querySelector('#first').onclick = () => this.firstPage();
         el.querySelector('#previous').onclick = () => this.previousPage();
         el.querySelector('#next').onclick = () => this.nextPage();
         el.querySelector('#last').onclick = () => this.lastPage();
              
-
         return el;
         
     }
