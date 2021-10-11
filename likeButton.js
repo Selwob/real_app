@@ -4,6 +4,7 @@ class LikeButton {
         let likeButtonEl = document.createElement("div");
         likeButtonEl.innerHTML = `
         <i id="likeButton" class="fa fa-thumbs-up" style="color:black"></i>
+        
         `
         likeButtonEl.querySelector('#likeButton').onclick = () => this.changeColor();
         return likeButtonEl;
