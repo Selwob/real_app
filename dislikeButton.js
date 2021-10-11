@@ -24,13 +24,14 @@ class DislikeButton {
         let thumbColor = document.querySelector('#dislikeButton');
         if (thumbColor.style.color == 'black') {
             thumbColor.style.color = 'blue';
-            currentArticle.upvotes = currentArticle.upvotes || 0;
             currentArticle.upvotes -= 1;
         } else {
             thumbColor.style.color = 'black';
-            currentArticle.upvotes = currentArticle.upvotes || 0;
             currentArticle.upvotes += 1;
         }
+
+        populateStorage();
+        
     }
 
 }
