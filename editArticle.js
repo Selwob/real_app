@@ -39,7 +39,7 @@ class EditArticle {
             this.art.tags = newTagsArr
             window.location.hash = this.art.id
     
-            populateStorage();
+            useArticleDatabase.populateStorage(useArticleDatabase);
         });
         
     

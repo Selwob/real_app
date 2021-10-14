@@ -2,16 +2,16 @@ class Comments {
 
     constructor (artId) {
         this.artId = artId;
+        //this.articleArray = articleArray;
     }
 
     render(el) {
-        let currentArticle = {};
-        
-        for (let article of db) {
-            if (article.id == this.artId) {
-                currentArticle = article;
-            }
-        };
+        // let currentArticle = {}; 
+        // for (let article of this.articleArray) {
+        //     if (article.id == this.artId) {
+        //         currentArticle = article;
+        //     }
+        // };
         
         let commentBox = el || document.createElement("div");
         commentBox.innerHTML =`
@@ -26,27 +26,32 @@ class Comments {
         
         let submit = commentBox.querySelector('#submit');
         
-        let previousComment = currentArticle.comments || [];
+        // let previousComment = currentArticle.comments || [];
+        let previousComment = useArticleDatabase.getComments(this.artId) || [];
         for (let comment of previousComment) {
             commentBox.querySelector("#previousComments").innerHTML += `<p>${comment}</p>`
         }
         
-        submit.onclick = (ev => {
+        submit.onclick = (ev) => {
+            ev.preventDefault(); // Prevents <form> auto submit thingy
+
             let commentList = [];
-            commentList.push.apply(commentList, currentArticle.comments);
+            // commentList.push.apply(commentList, currentArticle.comments);
+            commentList.push.apply(commentList, previousComment);
             
             let comment = commentBox.querySelector('#commentbox').value;
             commentList.push(comment);
             
-            currentArticle.comments = commentList;
+            // currentArticle.comments = commentList;
+            useArticleDatabase.setComments(this.artId, commentList);
             
-            populateStorage();
+            useArticleDatabase.populateStorage();
 
             commentBox.querySelector('#commentbox').value = "";
 
             this.render(commentBox);
 
-        });
+        };
 
         return commentBox;
     }

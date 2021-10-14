@@ -17,43 +17,36 @@ class Paginator {
         return firstItemIndex;
     }
 
-    nextPage() {
+    nextPage(el) {
         this.currentPage += 1;
         let offset = this.getOffset();
         this.onPageChange(offset, offset + this.numberOfPages);
-        this.check();
+        this.render(el);
     }
 
-    previousPage() {
+    previousPage(el) {
         this.currentPage -= 1;
         let offset = this.getOffset();
         this.onPageChange(offset, offset + this.numberOfPages);
-        this.check();
+        this.render(el);
     }
     
-    firstPage() {
+    firstPage(el) {
         this.currentPage = 1;
         let offset = this.getOffset();
         this.onPageChange(offset, offset + this.numberOfPages);
-        this.check();
+        this.render(el);
     }
 
-    lastPage() {
+    lastPage(el) {
         this.currentPage = this.numberOfPages;
         let offset = this.getOffset();
         this.onPageChange(offset, offset + this.numberOfPages);
-        this.check();
-    }
-     
-    check() {
-        document.getElementById("first").disabled = this.currentPage == 1 ? true : false;
-        document.getElementById("previous").disabled = this.currentPage == 1 ? true : false;
-        document.getElementById("next").disabled = this.currentPage == this.numberOfPages ? true : false;
-        document.getElementById("last").disabled = this.currentPage == this.numberOfPages ? true : false;
+        this.render(el);
     }
 
-    render() {
-        let el = document.createElement("div");
+    render(el) {
+        el = el || document.createElement("div");
         el.innerHTML = `
         <div id="outer">
         <div id="inner"; style="position: relative; left: 300px;">
@@ -63,11 +56,16 @@ class Paginator {
             <input type="button" class="navButton" id="last" value="last" />
         </div>
         </div>`
-        el.querySelector('#first').onclick = () => this.firstPage();
-        el.querySelector('#previous').onclick = () => this.previousPage();
-        el.querySelector('#next').onclick = () => this.nextPage();
-        el.querySelector('#last').onclick = () => this.lastPage();
-             
+        el.querySelector('#first').onclick = () => this.firstPage(el);
+        el.querySelector('#previous').onclick = () => this.previousPage(el);
+        el.querySelector('#next').onclick = () => this.nextPage(el);
+        el.querySelector('#last').onclick = () => this.lastPage(el);
+
+        el.querySelector("#first").disabled = this.currentPage == 1 ? true : false;
+        el.querySelector("#previous").disabled = this.currentPage == 1 ? true : false;
+        el.querySelector("#next").disabled = this.currentPage == this.numberOfPages ? true : false;
+        el.querySelector("#last").disabled = this.currentPage == this.numberOfPages ? true : false;
+        
         return el;
         
     }
