@@ -27,7 +27,6 @@ class LikeButton {
         `
         likeButtonEl.querySelector('#likeButton').onclick = () => this.changeColorLike(likeButtonEl, 1);
         likeButtonEl.querySelector('#dislikeButton').onclick = () => this.changeColorLike(likeButtonEl, -1);
-        
         return likeButtonEl;
     }
     

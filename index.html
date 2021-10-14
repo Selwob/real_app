@@ -65,7 +65,15 @@
                 
                 let paginatorEl = paginator.render();
                 document.getElementById("pageContent").append(paginatorEl)
-            
+
+                let newArticleButton = document.createElement('p');
+                newArticleButton.innerHTML = `<p><button class="button" id="newArticle">New Article</button></p>`;
+                document.getElementById("pageContent").append(newArticleButton);
+
+                pageContent.querySelector('#newArticle').onclick = (ev => {
+                    useArticleDatabase.createNewArticle();
+                    checkTheHash();
+                });
         }  
 
         // Show edit article page

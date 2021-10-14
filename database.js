@@ -128,6 +128,7 @@ class Database {
         },
     ];
 
+    
     constructor () {
         this.database = this.loadDb() || this.articleDatabase;
     };
@@ -166,7 +167,9 @@ class Database {
     }
 
     vote(artId, vote) {
-        this.getArticleObj(artId).upvotes += vote;
+        let currentArt = this.getArticleObj(artId);
+        let currentUpvotes = currentArt.upvotes || 0;
+        currentArt.upvotes = currentUpvotes + vote
     }
 
     getComments(artId) {
@@ -190,5 +193,17 @@ class Database {
         };
         alert("You deleted")
         
+    }
+
+    createNewArticle() {
+        let newId = this.database[(this.database.length -1)].id + 1;
+        let emptyArticle = {
+            id: newId,
+            article: "programming is great",
+            name: `programming article ${newId}`,
+            tags: ["progamming"]
+        }
+        this.database.push(emptyArticle);
+        this.populateStorage();
     }
 };
