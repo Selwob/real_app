@@ -149,9 +149,9 @@ class Database {
         localStorage.setItem('localDatabase', JSON.stringify(this.database));
     };
 
-    getArticle(articleIndex) {
-        return new Article(this.database[articleIndex]).render();
-    };
+    // getArticle(articleIndex) {
+    //     return new Article(this.database[articleIndex]).render();
+    // };
 
     checkArticleExists(articleIndex) {
         return articleIndex in this.database;
