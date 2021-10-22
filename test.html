@@ -1,24 +1,61 @@
-<script>
-    class A {
-        a = 1;
-        go() {
+<html>
+    <head>
+        
+        <script src="paginator.js" type="text/javascript"></script>
+    </head>
+    <body>
+    </body>
 
-            let t2 = () => {
-                console.log(this.a, "t 2 call");
-            }
+    <script>
+        function reportError(message) {
+            let errorParagraph = document.createElement("div");
+            document.body.append(errorParagraph)
+            errorParagraph.innerHTML = `<p style='background-color: red'>${message}</p>`
     
-            t2()
-            function t(){
-                console.log(this.a, "t call");
-            }
-
-            t()
-
         }
 
+        function reportSuccess(message) {
+            let errorParagraph = document.createElement("div");
+            document.body.append(errorParagraph)
+            errorParagraph.innerHTML = `<p style='background-color: green'>${message}</p>`
+    
+        }
 
-    }
+        function testDatabase() {
+            let paginator = new Paginator(10, 5, function(start, end){
+                console.log(start, end)
+            });
 
-    let clas = new A()
-    clas.go()   
-</script>
+            let element = paginator.render();
+            if (element.querySelector('#first').disabled) {
+                reportSuccess("OK First page disabled Hooray")
+            } else {
+                reportError("NOT OK First page enabled")
+            }
+
+            if (paginator.currentPage === 1) {
+                reportSuccess("OK You are on the first page!")
+            } else {
+                reportError("NOT OK You are not on the first page :(")
+            }
+
+            element.querySelector('#next').click();
+
+            if (!element.querySelector('#first').disabled) {
+                reportSuccess("OK First page NOT disabled Hooray")
+            } else {
+                reportError("NOT OK First page disabled")
+            }
+
+            if (paginator.currentPage === 2) {
+                reportSuccess("OK You are on the second page!")
+            } else {
+                reportError("NOT OK You are not on the second page :(")
+            }
+            
+        }
+        testDatabase()
+        </script>
+
+
+</html>
